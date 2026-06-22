@@ -1,0 +1,24 @@
+#!/bin/sh
+#
+# S41eth0_primary - Force wlan0 down on every boot
+# Runs before S43wifi_bcm_init_config / S44wifi_bcm_up (disabled)
+# and before S99start_app
+#
+# Part of k1max-wired-network
+# https://github.com/tkdesign-jp/k1max-wired-network
+#
+# Install: /etc/init.d/S41eth0_primary  (chmod 755)
+#
+# Why sleep 3:
+#   give the kernel a moment to bring wlan0 up to a state where
+#   `ip link set wlan0 down` actually has something to operate on.
+#
+# Why not killall wifi-server:
+#   earlier versions did `sleep 10 && killall wifi-server` here.
+#   On K1 MAX, that triggered the Monitor watchdog to restart all
+#   services, which in turn killed Klipper and left the printer
+#   unbootable. See docs/troubleshooting.md.
+#
+
+sleep 3
+ip link set wlan0 down 2>/dev/null || true
