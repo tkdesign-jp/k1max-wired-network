@@ -95,7 +95,7 @@ sh scripts/apply.sh
 
 `apply.sh` の動作:
 
-1. 影響を受けるファイルを `/tmp/k1max-wired-network-backup-<timestamp>/` にバックアップ
+1. 影響を受けるファイルを `/usr/data/k1max-wired-network-backup-<timestamp>/` にバックアップ
 2. S43/S44 を `chmod -x` で無効化
 3. `system_config.json` にパッチを当て `wifi_sw: 0` に
 4. `S41eth0_primary` を `/etc/init.d/` に正しい権限で配置
@@ -150,7 +150,7 @@ rm /etc/init.d/S41eth0_primary
 reboot
 ```
 
-`apply.sh` が作成したバックアップ(`/tmp/k1max-wired-network-backup-<timestamp>/`)に元のファイルが入っている。
+`apply.sh` が作成したバックアップ(`/usr/data/k1max-wired-network-backup-<timestamp>/`)に元のファイルが入っている。
 
 ---
 

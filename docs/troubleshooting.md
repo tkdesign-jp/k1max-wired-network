@@ -152,7 +152,7 @@ rm /etc/init.d/S41eth0_primary
 reboot
 ```
 
-If you used `apply.sh`, the originals are also under `/tmp/k1max-wired-network-backup-<timestamp>/`.
+If you used `apply.sh`, the originals are also under `/usr/data/k1max-wired-network-backup-<timestamp>/`.
 
 ---
 

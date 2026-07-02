@@ -95,7 +95,7 @@ sh scripts/apply.sh
 
 `apply.sh` will:
 
-1. Back up the affected files into `/tmp/k1max-wired-network-backup-<timestamp>/`.
+1. Back up the affected files into `/usr/data/k1max-wired-network-backup-<timestamp>/`.
 2. Disable S43/S44 via `chmod -x`.
 3. Patch `system_config.json` to set `wifi_sw: 0`.
 4. Install `S41eth0_primary` into `/etc/init.d/` with the correct permissions.
@@ -150,7 +150,7 @@ rm /etc/init.d/S41eth0_primary
 reboot
 ```
 
-The backup created by `apply.sh` (under `/tmp/k1max-wired-network-backup-<timestamp>/`) contains the original copies.
+The backup created by `apply.sh` (under `/usr/data/k1max-wired-network-backup-<timestamp>/`) contains the original copies.
 
 ---
 

@@ -75,15 +75,13 @@ fi
 
 # 7. Mainsail reachable on port 4409
 if [ -n "$eth0_ip" ]; then
-    if (echo > /dev/tcp/127.0.0.1/4409) > /dev/null 2>&1; then
-        echo "$OK Mainsail reachable on port 4409"
+    # NOTE: /dev/tcp is a bash-ism and does not work in BusyBox ash
+    # (the /bin/sh on stock K1 firmware), so we check the listening
+    # socket via netstat instead.
+    if netstat -ln 2>/dev/null | grep -q ":4409 "; then
+        echo "$OK Mainsail listening on port 4409"
     else
-        # Fall back: check if anything is listening on 4409
-        if netstat -ln 2>/dev/null | grep -q ":4409 "; then
-            echo "$OK port 4409 is listening (TCP probe unsupported)"
-        else
-            echo "$FAIL nothing listening on port 4409"
-        fi
+        echo "$FAIL nothing listening on port 4409"
     fi
 fi
 

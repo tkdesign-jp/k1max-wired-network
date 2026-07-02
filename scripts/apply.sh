@@ -49,8 +49,11 @@ if [ ! -f "$SRC_VERIFY" ]; then
 fi
 
 # Backup
+# NOTE: /tmp on stock K1 firmware is tmpfs and is wiped on reboot.
+# Since this script tells you to reboot right after it finishes,
+# backups MUST go to persistent storage (/usr/data).
 TS=$(date +%Y%m%d-%H%M%S)
-BACKUP_DIR="/tmp/k1max-wired-network-backup-$TS"
+BACKUP_DIR="/usr/data/k1max-wired-network-backup-$TS"
 mkdir -p "$BACKUP_DIR"
 echo "[1/5] Backing up to $BACKUP_DIR"
 for f in /etc/init.d/S43wifi_bcm_init_config \
