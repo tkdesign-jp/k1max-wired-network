@@ -18,7 +18,7 @@ A K1 MAX connected to the LAN via Ethernet was losing all network access wheneve
 - Turning WiFi off in the UI was a soft toggle: the WiFi driver remained loaded and `wlan0` stayed up.
 - The whole system seemed to assume WiFi was the canonical interface.
 
-Goal: make `eth0` the only network path, get the WiFi driver out of the picture, and stop the camera streamer that was running unused.
+Goal: make `eth0` the only network path and get the WiFi radio out of the picture. The camera is out of scope.
 
 ---
 
@@ -103,9 +103,9 @@ The final `S41eth0_primary` is the minimal version: bring `wlan0` down and stop.
 
 ## 5. mjpg_streamer
 
-`mjpg_streamer` is the camera frame server. It is launched by the Creality app stack (not directly by init.d), and on a default K1 MAX it runs even when nothing is consuming the stream.
+`mjpg_streamer` is the camera frame server, launched by the Creality app stack. On a default K1 MAX it runs even when nothing is consuming the stream. This project leaves it alone.
 
-In this configuration, with `wifi-server` disabled (because there is no WiFi) and `wlan0` down, `mjpg_streamer` stops getting started during application bringup. There is no explicit "stop mjpg_streamer" action in `apply.sh` — it just doesn't come up.
+Note: an earlier version of this document claimed `mjpg_streamer` stops because `wifi-server` no longer starts it. That is wrong on both counts. `wifi-server` is **not** disabled by this project (it is started by `S99start_app` and comes up ~16s after boot even with S43/S44 disabled and `wifi_sw=0`), and its binary contains **zero** references to `mjpg_streamer` or `cam_app`. The camera keeps running exactly as on stock firmware.
 
 Verify after reboot:
 
@@ -113,7 +113,7 @@ Verify after reboot:
 ps | grep mjpg
 ```
 
-If you see `mjpg_streamer` running, something else in your stack started it.
+Seeing `mjpg_streamer` running is the expected, normal state.
 
 ---
 

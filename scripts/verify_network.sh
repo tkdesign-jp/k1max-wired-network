@@ -64,11 +64,14 @@ else
     echo "$INFO wpa_supplicant is not running"
 fi
 
-# 6. mjpg_streamer not running
+# 6. mjpg_streamer state (informational)
+#    This project does not touch the camera. wifi-server contains no
+#    reference to mjpg_streamer or cam_app, so disabling WiFi has no
+#    effect on the camera path either way.
 if pgrep mjpg_streamer > /dev/null 2>&1; then
-    echo "$FAIL mjpg_streamer is running"
+    echo "$INFO mjpg_streamer is running (camera untouched by this project)"
 else
-    echo "$OK mjpg_streamer is not running"
+    echo "$INFO mjpg_streamer is not running"
 fi
 
 # 7. Klipper / Moonraker / nginx / Dropbear all running

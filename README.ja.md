@@ -1,6 +1,6 @@
 # K1 MAX 有線ネットワーク固定化
 
-Creality K1 MAX を**有線LANのみで安定動作**させる。WiFi を完全に無効化し、カメラプロセスも停止する。
+Creality K1 MAX を**有線LANのみで安定動作**させる。WiFi の電波を rfkill でブロックする。
 
 > 🇬🇧 English version: [README.md](README.md)
 > ⚠️ 適用前に [DISCLAIMER.md](DISCLAIMER.md) を読むこと。
@@ -16,10 +16,9 @@ Creality K1 MAX を**有線LANのみで安定動作**させる。WiFi を完全�
 - `eth0` を唯一のアクティブなネットワークインターフェースにする
 - 起動のたびに `wlan0` を強制 down
 - `wifi-server` による WiFi 再有効化を阻止
-- `mjpg_streamer`(カメラ)を停止(不要な場合)
 - 再起動後の状態を検証
 
-最終結果: K1 MAX が起動直後から有線 Ethernet で動作し、WiFi は一切触らず、カメラフレームも送らず、無線ルートに静かにフォールバックすることもない。
+最終結果: K1 MAX が起動直後から有線 Ethernet で動作し、WiFi の電波はブロックされ、無線ルートに静かにフォールバックすることもない。
 
 ---
 
@@ -128,7 +127,7 @@ sh /usr/data/printer_data/config/verify_network.sh
 [OK]  wlan0 is DOWN (IP なし)
 [OK]  default route is via eth0
 [OK]  wpa_supplicant is not running
-[OK]  mjpg_streamer is not running
+[INFO] mjpg_streamer is running (camera untouched by this project)
 [OK]  Klipper / Moonraker / nginx / Dropbear all running
 [OK]  Mainsail reachable on port 4409
 ```
@@ -156,7 +155,7 @@ reboot
 
 ## 既知の制限
 
-- `mjpg_streamer` は `wifi-server` が起動しなくなったために結果として停止しているだけ。何か別の方法でカメラ経路を再有効化すれば復活する。このセットには単独の「カメラ無効化」トグルはない
+- カメラはこのプロジェクトの対象外。`wifi-server` のバイナリには `mjpg_streamer` も `cam_app` も一切参照がなく、WiFi を無効化してもカメラ経路には何の影響もない。`cam_app` / `mjpg_streamer` / `webrtc` は純正のまま動き続ける。以前の記述「wifi-server が起動しないのでカメラも止まる」は誤りだった
 - Creality のファームウェアアップデートで WiFi スクリプトが再有効化される可能性がある。Creality アップデート後は `apply.sh` を再実行すること
 - `/usr/data/creality/userdata/config/system_config.json` のパスは純正 K1 MAX ファームウェア。改造ファームウェアでは異なる場所かもしれない
 

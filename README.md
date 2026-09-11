@@ -1,6 +1,6 @@
 # K1 MAX Wired Network Hardening
 
-Make Creality K1 MAX run reliably on **wired Ethernet only**, with WiFi fully disabled and the camera process stopped.
+Make Creality K1 MAX run reliably on **wired Ethernet only**, with the WiFi radio blocked.
 
 > 🇯🇵 日本語版は [README.ja.md](README.ja.md) を参照してください。
 > ⚠️ Before applying anything, read [DISCLAIMER.md](DISCLAIMER.md).
@@ -16,10 +16,9 @@ This repository contains the boot-time scripts and the procedure needed to:
 - Make `eth0` the only active network interface.
 - Force `wlan0` down on every boot.
 - Stop `wifi-server` from re-enabling WiFi.
-- Stop `mjpg_streamer` (camera) if you don't use it.
 - Verify the resulting state after every reboot.
 
-The end result: a K1 MAX that boots straight onto wired Ethernet, never touches WiFi, never streams camera frames, and never silently falls back to a wireless route.
+The end result: a K1 MAX that boots straight onto wired Ethernet, keeps the WiFi radio blocked, and never silently falls back to a wireless route.
 
 ---
 
@@ -128,7 +127,7 @@ Follow the steps in [docs/troubleshooting.md](docs/troubleshooting.md) which des
 [OK]  wlan0 is DOWN (no IP)
 [OK]  default route is via eth0
 [OK]  wpa_supplicant is not running
-[OK]  mjpg_streamer is not running
+[INFO] mjpg_streamer is running (camera untouched by this project)
 [OK]  Klipper / Moonraker / nginx / Dropbear all running
 [OK]  Mainsail reachable on port 4409
 ```
@@ -156,7 +155,7 @@ The backup created by `apply.sh` (under `/usr/data/k1max-wired-network-backup-<t
 
 ## Known limitations
 
-- `mjpg_streamer` is stopped only because `wifi-server` no longer starts it. If you re-enable the camera path some other way, it will come back. There is no separate "camera disable" toggle in this set.
+- The camera is **not** touched by this project. `wifi-server` contains no reference to `mjpg_streamer` or `cam_app`, so `cam_app`, `mjpg_streamer` and `webrtc` keep running exactly as on stock firmware. Earlier versions of this README claimed the camera stopped as a side effect; that was wrong.
 - Creality firmware updates may re-enable the WiFi scripts. After any Creality update, re-run `apply.sh`.
 - The path `/usr/data/creality/userdata/config/system_config.json` is stock K1 MAX firmware. Modified firmware builds may use a different location.
 
