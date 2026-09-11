@@ -123,13 +123,14 @@ sh /usr/data/printer_data/config/verify_network.sh
 ## `verify_network.sh` の期待される出力
 
 ```
-[OK]  eth0 has 192.168.1.19 (または相応の有線 IP)
-[OK]  wlan0 is DOWN (IP なし)
-[OK]  default route is via eth0
-[OK]  wpa_supplicant is not running
+[OK]   eth0 has 192.168.1.88
+[OK]   wlan0 is DOWN (no IP)
+[OK]   default route is via eth0
+[OK]   wifi radio is blocked (rfkill)
+[INFO] wpa_supplicant is running (expected; radio is blocked)
 [INFO] mjpg_streamer is running (camera untouched by this project)
-[OK]  Klipper / Moonraker / nginx / Dropbear all running
-[OK]  Mainsail reachable on port 4409
+[OK]   Klipper / Moonraker / nginx / Dropbear all running
+[OK]   Mainsail listening on port 4409
 ```
 
 `[FAIL]` 行があれば [docs/troubleshooting.md](docs/troubleshooting.md) を参照。

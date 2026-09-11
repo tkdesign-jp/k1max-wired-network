@@ -123,13 +123,14 @@ Follow the steps in [docs/troubleshooting.md](docs/troubleshooting.md) which des
 ## Expected output of `verify_network.sh`
 
 ```
-[OK]  eth0 has 192.168.1.19 (or similar wired IP)
-[OK]  wlan0 is DOWN (no IP)
-[OK]  default route is via eth0
-[OK]  wpa_supplicant is not running
+[OK]   eth0 has 192.168.1.88
+[OK]   wlan0 is DOWN (no IP)
+[OK]   default route is via eth0
+[OK]   wifi radio is blocked (rfkill)
+[INFO] wpa_supplicant is running (expected; radio is blocked)
 [INFO] mjpg_streamer is running (camera untouched by this project)
-[OK]  Klipper / Moonraker / nginx / Dropbear all running
-[OK]  Mainsail reachable on port 4409
+[OK]   Klipper / Moonraker / nginx / Dropbear all running
+[OK]   Mainsail listening on port 4409
 ```
 
 If any line is `[FAIL]`, see [docs/troubleshooting.md](docs/troubleshooting.md).
