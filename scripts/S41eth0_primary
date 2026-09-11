@@ -1,8 +1,6 @@
 #!/bin/sh
 #
 # S41eth0_primary - Force wlan0 down on every boot
-# Runs before S43wifi_bcm_init_config / S44wifi_bcm_up (disabled)
-# and before S99start_app
 #
 # Part of k1max-wired-network
 # https://github.com/tkdesign-jp/k1max-wired-network
@@ -13,6 +11,27 @@
 #   give the kernel a moment to bring wlan0 up to a state where
 #   `ip link set wlan0 down` actually has something to operate on.
 #
+# Why the delayed rfkill:
+#   Disabling S43/S44 and setting wifi_sw=0 is NOT enough. wifi-server
+#   (started by S99start_app) comes up ~17s after boot and brings wlan0
+#   back UP, then starts wpa_supplicant (~20s) and udhcpc on wlan0.
+#   Measured on a clean boot: wlan0 ends up UP/dormant despite S41.
+#
+#   `rfkill block wifi` puts the radio down for good. It kills no
+#   process, so the Monitor watchdog is never triggered.
+#
+#   The 30s delay reproduces the exact condition verified safe at
+#   runtime: block only AFTER wifi-server has fully started. Blocking
+#   before it starts is untested and may make wifi-server misbehave.
+#
+#   Measured result after reboot: wlan0 operstate=down, flags lose UP,
+#   wlan0 TX frozen at 3 packets (those sent during the 30s window).
+#   wifi-server / Monitor / master-server / app-server / display-server
+#   PIDs unchanged; Klipper reached "ready"; camera and web UI HTTP 200.
+#
+#   Note: wpa_supplicant and udhcpc processes still remain. Combined
+#   CPU stays around 0.3% of one core. The radio is off, not the daemons.
+#
 # Why not killall wifi-server:
 #   earlier versions did `sleep 10 && killall wifi-server` here.
 #   On K1 MAX, that triggered the Monitor watchdog to restart all
@@ -22,3 +41,5 @@
 
 sleep 3
 ip link set wlan0 down 2>/dev/null || true
+
+( sleep 30; rfkill block wifi 2>/dev/null ) &

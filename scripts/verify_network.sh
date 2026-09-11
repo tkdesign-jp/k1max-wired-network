@@ -15,6 +15,7 @@
 
 OK="[OK]  "
 FAIL="[FAIL]"
+INFO="[INFO]"
 
 echo "============================================"
 echo "  K1 MAX Wired Network Verification"
@@ -45,21 +46,32 @@ else
     echo "$FAIL default route is via '$default_iface' (expected eth0)"
 fi
 
-# 4. wpa_supplicant not running
-if pgrep wpa_supplicant > /dev/null 2>&1; then
-    echo "$FAIL wpa_supplicant is running"
+# 4. WiFi radio is blocked by rfkill
+if rfkill list 2>/dev/null | grep -A2 "Wireless LAN" | grep -q "Soft blocked: yes"; then
+    echo "$OK wifi radio is blocked (rfkill)"
 else
-    echo "$OK wpa_supplicant is not running"
+    echo "$FAIL wifi radio is not blocked (rfkill)"
 fi
 
-# 5. mjpg_streamer not running
+# 5. wpa_supplicant state (informational)
+#    wifi-server starts wpa_supplicant and udhcpc on wlan0 regardless of
+#    S43/S44 being disabled and wifi_sw=0. This project does not stop
+#    those daemons - it takes the radio away from them. Seeing them
+#    running is expected and is not a failure.
+if pgrep wpa_supplicant > /dev/null 2>&1; then
+    echo "$INFO wpa_supplicant is running (expected; radio is blocked)"
+else
+    echo "$INFO wpa_supplicant is not running"
+fi
+
+# 6. mjpg_streamer not running
 if pgrep mjpg_streamer > /dev/null 2>&1; then
     echo "$FAIL mjpg_streamer is running"
 else
     echo "$OK mjpg_streamer is not running"
 fi
 
-# 6. Klipper / Moonraker / nginx / Dropbear all running
+# 7. Klipper / Moonraker / nginx / Dropbear all running
 all_services_ok=1
 for svc in klipper moonraker nginx dropbear; do
     if pgrep -f "$svc" > /dev/null 2>&1; then
@@ -73,7 +85,7 @@ if [ "$all_services_ok" = "1" ]; then
     echo "$OK Klipper / Moonraker / nginx / Dropbear all running"
 fi
 
-# 7. Mainsail reachable on port 4409
+# 8. Mainsail reachable on port 4409
 if [ -n "$eth0_ip" ]; then
     # NOTE: /dev/tcp is a bash-ism and does not work in BusyBox ash
     # (the /bin/sh on stock K1 firmware), so we check the listening
